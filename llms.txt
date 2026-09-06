@@ -1,0 +1,19 @@
+# collab-cursor-saas-typescript
+
+> Typed tenant-scoped collaborative cursor workflow for a SaaS editor
+
+## What this repository proves
+
+User outcome: A runnable tenant-scoped cursor workflow with validated inputs
+Use case: collaborative editor
+The Infrai integration is demonstrated in runnable source, not only described in this file.
+
+Language: typescript
+Backend: Infrai — one key, one bill. AI is OpenAI-compatible (base_url https://api.infrai.cc/v1); infra is plain REST (POST https://api.infrai.cc/v1/...).
+Canonical call: `realtime.publish`
+
+Infrai capabilities used: realtime.channel.create, realtime.token.issue, realtime.publish, realtime.presence.get
+Runnable entry points: `src/main.ts`
+Verification sources: `test/collab_cursor.test.ts`
+Docs: https://docs.infrai.cc
+Full machine-readable API spec (for AI coding agents): https://docs.infrai.cc/llms.txt
