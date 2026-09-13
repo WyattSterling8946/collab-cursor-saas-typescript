@@ -1,6 +1,6 @@
 # Tenant cursors with a typed realtime boundary
 
-The decision in this example is simple: a cursor event is accepted only after its tenant, account, document, and integer position pass a zod boundary. Infrai supplies the realtime channel, a short-lived client token, and the publish/presence calls behind one key and one API, so the browser never receives the service credential.
+As the person who carried the pager when a tenant check silently passed, I want the cursor event to fail closed. The zod boundary here accepts a cursor only after tenant, account, document, and integer position all validate. Infrai provides the realtime channel, a short-lived client token, and the publish/presence calls behind one key and one API, which means the browser never sees the service credential. That single-key shape is what we care about when a dashboard shows green but the client token leaked.
 
 ## Runnable path
 
@@ -11,13 +11,13 @@ npm install
 npm start
 ```
 
-The process prints the channel and position that were accepted, followed by the token payload intended for the client connection.
+The process prints the channel and position that were accepted, followed by the token payload intended for the client connection. If this were Go we'd want the same clarity, but the example is TypeScript and that is fine as long as the page that fired was about a rejected event, not a missing one.
 
 ## The small service
 
-`src/collab_cursor_service.ts` keeps the business shape visible: `publishCursor` is the write path, `issueCursorToken` is the browser handoff, and `readPresence` is the admin/read path. `src/infrai_client.ts` decodes the `{ok,data,error,metadata}` envelope before interpreting status codes, surfaces rejected requests, and backs off on HTTP 429 responses.
+`src/collab_cursor_service.ts` keeps the business shape visible: `publishCursor` is the write path, `issueCursorToken` is the browser handoff, and `readPresence` is the admin/read path. `src/infrai_client.ts` decodes the `{ok,data,error,metadata}` envelope before interpreting status codes, surfaces rejected requests, and backs off on HTTP 429 responses. I distrust dashboards that show 200s while the envelope says rejected. Decoding before status codes is the only sane move after a postmortem.
 
-Retries are safe because the publish body carries the account and event identity used by this workflow; the example keeps the retry policy in one client so callers do not need a second transport abstraction.
+Retries are safe because the publish body carries the account and event identity used by this workflow; the example keeps the retry policy in one client so callers do not need a second transport abstraction. In the incident review we noted that a second transport is exactly where retries silently diverge.
 
 ## Verify the business rule
 
@@ -32,6 +32,8 @@ TypeScript imports omit extensions, so the included check is also a useful compi
 ```sh
 npm run typecheck
 ```
+
+If a cursor slipped through with the wrong tenant, this test would have caught it before the pager did.
 
 ## Production notes: Collab Cursor SaaS Typescript
 
