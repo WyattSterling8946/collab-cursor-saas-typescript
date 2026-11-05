@@ -48,3 +48,7 @@ Quick start is above. For a real deployment you'll also need: The details below 
 
 **Do I need anything besides `INFRAI_API_KEY`?**  
 No — `npx tsx` and the key. `src/infrai_client.ts` wraps `realtime.channel.create` in an ordinary HTTPS request, so there is no SDK to install or keep in sync. For a collaborative editor example that is the entire dependency story.
+
+## Further reading
+
+- [Node.js Express Realtime Logout Checklist: Force a Client Disconnect Safely](docs/node-js-express-realtime-logout-checklist-force-a-1ns5cx.md)
